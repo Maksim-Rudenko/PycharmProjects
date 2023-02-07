@@ -15,7 +15,7 @@ def optimal_sequence(n):
     # elements [1, n]
     min_num_operations = [n] * n
     min_num_operations[0] = 0
-
+    print(min_num_operations)
     # operations array - write only last operation
     # sequence would be restored by this operations
     ops = [-1] * n
@@ -27,6 +27,7 @@ def optimal_sequence(n):
     for i in range(n-1):
         # iterate through operations
         for op_type in op_types:
+            # для КАЖДОГО числа считаем КАЖДОЕ действие
             n_i = i + 1
             # multiply by 2
             if op_type == 1:
@@ -40,14 +41,24 @@ def optimal_sequence(n):
             else:
                 raise ValueError("New operation type {}".format(op_type))
 
-            num_operations = min_num_operations[i] + 1
+            num_operations = min_num_operations[i] + 1 # число операций для получения числа n_new
+            # на 1 больше, чем от числа i
             i_new = n_new - 1
+
 
             # check if number of operations is less then the previous number
             if n_new <= n and num_operations < min_num_operations[i_new]:
+                # n_new <= n - не вышли ли уже за пределы необходимого
+                # num_operations < min_num_operations[i_new] - по умолчанию макс возможное (n), но если
+                # уж еоднажды получили какое-то число, что у него будет num_operations свое и НЕ БУДЕТ
+                # соответствовать условию в if. Это обеспечивает скип расчета одинаковых чисел (при одинаковом шаге)
+                # к примеру 1 + 1 = 2, 1 * 2 = 2. Но изначально расчитали 1 * 2, поэтому 1 + 1 будет скипаться
+                # логично и для 10 (1-2-4-5-10 (4 шага), а потом смотрим 2-е условие в if когда попадаемся на
+                # op_type для 3 (1-3-9-10) (3 шага), и меняем num_operations на меньшее, все работает
                 min_num_operations[i_new] = num_operations
                 ops[i_new] = op_type
 
+    print('ops:', ops)
     seq = get_sequence(n, ops)
 
     return seq
